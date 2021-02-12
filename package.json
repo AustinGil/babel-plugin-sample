@@ -1,0 +1,14 @@
+{
+  "name": "p2",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "my-awesome-package": "file:./my-awesome-package"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.16",
+    "@babel/core": "^7.12.16",
+    "@babel/preset-env": "^7.12.16"
+  }
+}
