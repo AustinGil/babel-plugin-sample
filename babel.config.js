@@ -1,9 +1,8 @@
-const myBabelPlugin = require('my-awesome-package/babel-plugin.js')
+import myBabelPlugin from 'my-awesome-package/babel-plugin.js'
 
-console.log('???')
-
-module.exports = {
+export default {
   presets: [
     ["@babel/env"],
-  ]
+  ],
+  plugins: [myBabelPlugin]
 };
