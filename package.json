@@ -6,7 +6,9 @@
     "build": "babel ./example.js --out-dir dist"
   },
   "dependencies": {
-    "my-awesome-package": "file:./my-awesome-package"
+    "my-awesome-package": "file:./my-awesome-package",
+    "postcss": "^8.2.8",
+    "postcss-js": "^3.0.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.16",
