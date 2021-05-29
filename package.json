@@ -14,6 +14,7 @@
     "@babel/cli": "^7.12.16",
     "@babel/core": "^7.12.16",
     "@babel/preset-env": "^7.12.16",
-    "@babel/types": "^7.13.12"
+    "@babel/types": "^7.13.12",
+    "csstype": "^3.0.8"
   }
 }

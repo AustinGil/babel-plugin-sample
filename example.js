@@ -13,6 +13,15 @@ const myVariable2 = myFn({
   backgroundColor: '#fff',
   '&:hover': {
     color: 'red'
+  },
+  '&:focus': {
+    outline: 'purple'
+  },
+  '&:after': {
+    display: 'block'
+  },
+  '@media only screen and (max-width: 600px)': {
+    fontWeight: 'bold'
   }
 })
 // const myVariable3 = myFn`

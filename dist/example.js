@@ -7,7 +7,7 @@ var p = 5; // Transform 2: Replace these function calls with static result of th
 // const myVariableX = myFn('padding: ' + p + 'px; margin: ' + p + 'px;')
 // const myVariableY = myFn(`padding: ${p}px; margin: ${p}px;`)
 
-var myVariable2 = 'bg-#fff margin-auto'; // const myVariable3 = myFn`
+var myVariable2 = 'font-weight-bold after\:display-block:after focus\:outline-purple:focus hover\:color-red:hover bg-#fff margin-auto'; // const myVariable3 = myFn`
 //   border-radius: ${.5}rem;
 //   text-align: center;
 //   &:hover {

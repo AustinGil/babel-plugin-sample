@@ -28,7 +28,32 @@ const getClassName = (node) => {
     ['background-color', 'bg'],
   ])
   const prefix = classMap.get(node.prop) || node.prop
-  return `${prefix}-${node.value}`
+
+  let className = `${prefix}-${node.value}`
+
+  if (node.parent !== node.root()) {
+    if (node.parent.type ===  'rule'){
+      const pseudo = node.parent.selector.slice(2)
+      className = `${pseudo}\\:${className}:${pseudo}`
+    }
+  }
+
+  return className
+}
+/**
+ * 
+ * @param {import('@babel/types').Node[]} nodes
+ */
+function getStylesFromObject(nodes, t) {
+  const styles = {}
+  for (const {key, value} of nodes) {
+    if (t.isObjectExpression(value)) {
+      styles[key.value] = getStylesFromObject(value.properties, t)
+      continue
+    }
+    styles[key.name] = value.value
+  }
+  return styles
 }
 
 /**
@@ -46,11 +71,14 @@ function replacePathWithStatic(path, t) {
     // console.log(postcssJs.objectify(instanceStyles))
   } else if (t.isObjectExpression(firstArg)) {
     // Handle as Object
-    const styles = {}
-    for (const {key, value} of firstArg.properties) {
-      styles[key.name] = value.value
-    }
-    instanceStyles = postcss().process(styles, { parser: postcssJs }).root
+    const styles = getStylesFromObject(firstArg.properties, t)
+    const results = postcss().process(styles, { parser: postcssJs })
+    
+    // console.log(styles)
+    // console.log(results.root)
+    instanceStyles = results.root
+
+    // console.log(postcss().process(styles, { parser: postcssJs }))
   } else if (t.isFunctionExpression(firstArg) || t.isArrowFunctionExpression(firstArg)) {
     // Handle as tagged template
     // console.log(firstArg)
@@ -66,7 +94,16 @@ function replacePathWithStatic(path, t) {
   // Reverse order so the last instance wins in case of repeats
   instanceStyles.nodes.reverse()
 
-  for (const node of instanceStyles.nodes) {
+  // console.log(instanceStyles.nodes[1].selectors)
+
+  // instanceStyles.walkDecls()
+  // instanceStyles.walkAtRules((rule) => {
+  //   console.log(rule)
+  // })
+  // instanceStyles.walkRules((rule) => {
+  //   console.log(rule)
+  // })
+  instanceStyles.walkDecls((node) => {
     const className = getClassName(node)
     const selector = `.${className}`
 
@@ -84,7 +121,8 @@ function replacePathWithStatic(path, t) {
       const rule = postcss.rule({ selector: selector }).push(node)
       globalCssAst.push(rule)
     }
-  }
+  // }
+  })
 
   if (!classNames.size) return
 

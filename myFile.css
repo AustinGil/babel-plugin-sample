@@ -1,3 +1,15 @@
+.font-weight\=bold {
+    font-weight: bold
+}
+.after\:display-block:after {
+    display: block
+}
+.\&focus\:outline-purple:focus {
+    outline: purple
+}
+.hover\:color-red:hover {
+    color: red
+}
 .bg-#fff {
     background-color: #fff
 }
