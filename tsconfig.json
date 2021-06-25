@@ -1,14 +1,20 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
+    "allowJs": true,
     "alwaysStrict": true,
+    "checkJs": true,
     "declaration": true,
     "incremental": true,
     "target": "ESNext",
     "rootDir": "./",
     "outDir": "dist/",
-    "moduleResolution": "Node",
-    "esModuleInterop": true
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "forceConsistentCasingInFileNames":true,
+    "removeComments":true,
+    "strict":true,
   },
   "exclude": ["dist/"]
 }

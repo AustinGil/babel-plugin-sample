@@ -8,13 +8,24 @@
   "dependencies": {
     "my-awesome-package": "file:./my-awesome-package",
     "postcss": "^8.2.8",
-    "postcss-js": "^3.0.3"
+    "postcss-js": "^3.0.3",
+    "postcss-shorthand-expand": "^1.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.16",
     "@babel/core": "^7.12.16",
     "@babel/preset-env": "^7.12.16",
     "@babel/types": "^7.13.12",
-    "csstype": "^3.0.8"
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "babel-eslint": "^10.1.0",
+    "csstype": "^3.0.8",
+    "eslint": "^7.27.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jest": "^24.3.6",
+    "eslint-plugin-jsdoc": "^35.1.2",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-security": "^1.4.0",
+    "eslint-plugin-unicorn": "^33.0.1"
   }
 }
