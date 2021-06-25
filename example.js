@@ -1,29 +1,44 @@
 // Transform 1: Remove this line
-import { myFn } from 'my-awesome-package'
+import { myFn } from 'my-awesome-package';
 // import './import.js'
 
 const p = 5;
 
-// Transform 2: Replace these function calls with static result of the function
-// const myVariable1 = myFn('padding: 5px; &:hover { color: blue; }')
+// const myVariable1 = myFn('padding: 5px; &:hover { color: blue; }');
+const myVariableFunc = myFn((config) => ({
+  padding: config.variables.one,
+}));
 // const myVariableX = myFn('padding: ' + p + 'px; margin: ' + p + 'px;')
 // const myVariableY = myFn(`padding: ${p}px; margin: ${p}px;`)
-const myVariable2 = myFn({
-  margin: 'auto',
-  backgroundColor: '#fff',
-  '&:hover': {
-    color: 'red'
-  },
-  '&:focus': {
-    outline: 'purple'
-  },
-  '&:after': {
-    display: 'block'
-  },
-  '@media only screen and (max-width: 600px)': {
-    fontWeight: 'bold'
-  }
-})
+// const myVariable2 = myFn({
+//   margin: 10, // numbers
+//   padding: '0 10px', // spaces
+//   color: 'hsla(100, 100, 50, 1)', // hsl
+//   gap: 'calc(1 + 2)px', // calc
+//   background: '#fff', // shorthand
+//   textAlign: 'left',
+//   textAlign: 'right', // repeats
+//   // pseudos
+//   '&:hover': {
+//     color: 'red',
+//   },
+//   '&:focus': {
+//     outline: 'purple',
+//   },
+//   '&:after': {
+//     display: 'block',
+//   },
+//   // media queries
+//   '@media only screen and (max-width: 600px)': {
+//     fontWeight: 'bold',
+//   },
+//   // '.test &': {
+//   //   display: 'block',
+//   // },
+//   // '& .test': {
+//   //   display: 'block',
+//   // },
+// });
 // const myVariable3 = myFn`
 //   border-radius: ${.5}rem;
 //   text-align: center;
