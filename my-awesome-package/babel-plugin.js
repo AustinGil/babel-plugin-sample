@@ -3,7 +3,6 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import postcss from 'postcss';
 import postcssJs from 'postcss-js';
-import Babel from '@babel/core';
 // import { kebabCase } from './utils.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -11,12 +10,7 @@ const pkg = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8')
 );
 const PACKAGE_NAME = pkg.name;
-const FILE_OUT = 'myFile.css';
-const CONFIG = {
-  variables: {
-    one: '1',
-  },
-};
+let GLOBAL_SETTINGS = {};
 const classMap = new Map([
   ['background', 'bg'],
   ['background-attachment', 'bg-a'],
@@ -179,7 +173,7 @@ async function replacePathWithStatic(path, t) {
     const sourceCode = path.getSource();
     const functionDecl = sourceCode.slice(sourceCode.indexOf('('));
 
-    const styles = eval(functionDecl + `(${JSON.stringify(CONFIG)})`);
+    const styles = eval(functionDecl + `(${JSON.stringify(GLOBAL_SETTINGS)})`);
 
     const results = postcss().process(styles, { parser: postcssJs });
 
@@ -232,56 +226,74 @@ async function replacePathWithStatic(path, t) {
   path.replaceWithSourceString(`'${[...classNames.values()].join(' ')}'`);
 }
 
+const DEFAULT_SETTINGS = {
+  variables: {},
+  classes: {},
+};
 /**
- * @param context
+ * @param {typeof DEFAULT_SETTINGS & {}} [settings=DEFAULT_SETTINGS]
+ * @returns {Function}
  */
-export default function prtclsBabelPlugin(context) {
-  let functionAlias = 'myFn';
-  const t = context.types;
+export default (settings = DEFAULT_SETTINGS) => {
+  Object.assign(GLOBAL_SETTINGS, DEFAULT_SETTINGS, settings);
 
-  return {
-    name: PACKAGE_NAME,
-    // pre(state) {
-    //   this.cache = new Map();
-    // },
-    post(state) {
-      // console.log(this.cache);
-      const stream = fs.createWriteStream(FILE_OUT, { encoding: 'utf8' });
-      const data = globalCssAst.toString();
-      stream.write(data);
-    },
-    visitor: {
-      /** @see https://github.com/babel/babel/blob/main/packages/babel-parser/ast/spec.md */
+  /**
+   * @param context
+   */
+  // @ts-ignore
+  return function prtclsBabelPlugin(context) {
+    let functionAlias = 'myFn';
+    const t = context.types;
 
-      // Identifier(path, plugin) {
-      //   console.log(path)
+    return {
+      name: PACKAGE_NAME,
+      // pre(state) {
+      //   this.cache = new Map();
       // },
-
-      ImportDeclaration(path) {
-        // Remove import statement
-        if (
-          [
-            PACKAGE_NAME,
-            `${PACKAGE_NAME}/index`,
-            `${PACKAGE_NAME}/index.js`,
-          ].includes(path.node.source.value)
-        ) {
-          const { specifiers } = path.node;
-          const spec = specifiers[0];
-          if (spec.type === 'ImportSpecifier') {
-            functionAlias = spec.local.name;
+      post(state) {
+        // console.log(this.cache);
+        const stream = fs.createWriteStream(
+          `${PACKAGE_NAME}/${PACKAGE_NAME}.css`,
+          {
+            encoding: 'utf8',
           }
-          path.remove();
-        }
+        );
+        const data = globalCssAst.toString();
+        stream.write(data);
       },
+      visitor: {
+        /** @see https://github.com/babel/babel/blob/main/packages/babel-parser/ast/spec.md */
 
-      /**
-       * @param {import('@babel/types').CallExpression} path
-       */
-      CallExpression(path) {
-        if (path.node.callee.name !== functionAlias) return;
-        replacePathWithStatic(path, t);
+        // Identifier(path, plugin) {
+        //   console.log(path)
+        // },
+
+        ImportDeclaration(path) {
+          // Remove import statement
+          if (
+            [
+              PACKAGE_NAME,
+              `${PACKAGE_NAME}/index`,
+              `${PACKAGE_NAME}/index.js`,
+            ].includes(path.node.source.value)
+          ) {
+            const { specifiers } = path.node;
+            const spec = specifiers[0];
+            if (spec.type === 'ImportSpecifier') {
+              functionAlias = spec.local.name;
+            }
+            path.remove();
+          }
+        },
+
+        /**
+         * @param {import('@babel/types').CallExpression} path
+         */
+        CallExpression(path) {
+          if (path.node.callee.name !== functionAlias) return;
+          replacePathWithStatic(path, t);
+        },
       },
-    },
+    };
   };
-}
+};

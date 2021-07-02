@@ -4,11 +4,7 @@
 // import './import.js'
 var p = 5; // const myVariable1 = myFn('padding: 5px; &:hover { color: blue; }');
 
-var myVariableFunc = myFn(function (parts) {
-  return {
-    padding: p
-  };
-}); // const myVariableX = myFn('padding: ' + p + 'px; margin: ' + p + 'px;')
+var myVariableFunc = 'p_.25rem'; // const myVariableX = myFn('padding: ' + p + 'px; margin: ' + p + 'px;')
 // const myVariableY = myFn(`padding: ${p}px; margin: ${p}px;`)
 // const myVariable2 = myFn({
 //   margin: 10, // numbers

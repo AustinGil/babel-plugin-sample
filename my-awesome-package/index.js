@@ -1,11 +1,17 @@
+/** @typedef {import('csstype').Properties} CssStylesObject */
+
 /**
- * @param  {import('csstype').Properties} params
- * @returns
+ * @callback ConfigHandler
+ * @param {{ variables: {}, classes: {} }} config
+ * @returns {CssStylesObject}
  */
 
-//  csstype
+/**
+ * @param  {CssStylesObject | ConfigHandler} params
+ */
+
+// @ts-ignore
+// eslint-ignore-next-line no-unused-vars
 export const myFn = (params) => {
-  // Do stuff with params
-  console.log(params);
-  return 'static output';
+  throw new Error('This is a build time function only');
 };

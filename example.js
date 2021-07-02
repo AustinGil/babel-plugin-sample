@@ -5,9 +5,11 @@ import { myFn } from 'my-awesome-package';
 const p = 5;
 
 // const myVariable1 = myFn('padding: 5px; &:hover { color: blue; }');
-const myVariableFunc = myFn((config) => ({
-  padding: config.variables.one,
-}));
+const myVariableFunc = myFn((config) => {
+  return {
+    padding: config.variables.size4,
+  };
+});
 // const myVariableX = myFn('padding: ' + p + 'px; margin: ' + p + 'px;')
 // const myVariableY = myFn(`padding: ${p}px; margin: ${p}px;`)
 // const myVariable2 = myFn({
