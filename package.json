@@ -1,9 +1,9 @@
 {
   "name": "my-awesome-package",
   "version": "0.0.1",
-  "type": "module",
   "scripts": {
-    "build": "babel ./example.js --out-dir dist"
+    "build": "babel ./example.js --out-dir dist",
+    "build:demo": "fiddly"
   },
   "dependencies": {
     "my-awesome-package": "file:./my-awesome-package",
@@ -26,6 +26,7 @@
     "eslint-plugin-jsdoc": "^35.1.2",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-security": "^1.4.0",
-    "eslint-plugin-unicorn": "^33.0.1"
+    "eslint-plugin-unicorn": "^33.0.1",
+    "fiddly": "^0.9.1"
   }
 }

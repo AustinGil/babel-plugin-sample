@@ -1,11 +1,10 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import postcss from 'postcss';
-import postcssJs from 'postcss-js';
+const fs = require('fs');
+const path = require('path');
+const postcss = require('postcss');
+const postcssJs = require('postcss-js');
 // import { kebabCase } from './utils.js'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8')
 );
@@ -83,32 +82,32 @@ const classMap = new Map([
   ['visibility', 'v'],
   ['width', 'w'],
   ['z-index', 'z-i'],
-  // ['display', 'd'],
-  // ['margin', 'm'],
-  // ['margin-top', 'mt'],
-  // ['margin-bottom', 'mb'],
-  // ['margin-left', 'ml'],
-  // ['margin-right', 'mr'],
-  // ['padding', 'p'],
-  // ['padding-top', 'pt'],
-  // ['padding-bottom', 'pb'],
-  // ['padding-left', 'pl'],
-  // ['padding-right', 'pr'],
-  // ['background', 'bg'],
-  // ['background-color', 'bgc'],
 ]);
 
 const globalCssAst = postcss.root();
+const mediaQueriesAst = postcss.root();
 
 /**
  * @param {import('postcss').ChildNode} node
  * @returns {{ className: string, selector: string}
  */
 const getClassAndSelector = (node) => {
+  if (node.parent.name === 'media') {
+    // console.log(node.parent);
+    // mediaQueriesAst.append(node);
+    let classStr = node.parent.params
+      .replace(/ and /g, '\\&')
+      .replace('only ', 'o_')
+      .replace('screen', 's')
+      .replace(/\(min-width: ?/g, '>')
+      .replace(/\(max-width: ?/g, '<')
+      .replace(')', '');
+    console.log(classStr);
+  }
   const prefix = classMap.get(node.prop) || node.prop;
   const suffix = node.value.replace(/, /g, ',').replace(/ /g, '_');
   let className = `${prefix}_${suffix}`;
-  let selector = className.replace(/([#()+,])/g, '\\$1');
+  let selector = className.replace(/([#()+,.])/g, '\\$1');
 
   if (node.parent !== node.root() && node.parent.type === 'rule') {
     const pseudo = node.parent.selector.slice(2);
@@ -145,12 +144,12 @@ async function replacePathWithStatic(path, t) {
   const rulesAlreadyAdded = new Set();
   const classNames = new Set();
   let instanceStyles;
+  const mediaQueries = [];
 
   if (t.isStringLiteral(firstArg)) {
     instanceStyles = postcss.parse(firstArg.value);
     // console.log(postcssJs.objectify(instanceStyles))
   } else if (t.isObjectExpression(firstArg)) {
-    console.log(firstArg.properties);
     // Handle as Object
     const styles = getStylesFromObject(firstArg.properties, t);
     const results = postcss().process(styles, { parser: postcssJs });
@@ -202,6 +201,7 @@ async function replacePathWithStatic(path, t) {
   //   console.log(rule)
   // })
   instanceStyles.walkDecls((node) => {
+    // TODO: Detect media queries
     const { className, selector } = getClassAndSelector(node);
 
     // Only return class names for unique properties
@@ -234,7 +234,7 @@ const DEFAULT_SETTINGS = {
  * @param {typeof DEFAULT_SETTINGS & {}} [settings=DEFAULT_SETTINGS]
  * @returns {Function}
  */
-export default (settings = DEFAULT_SETTINGS) => {
+module.exports = (settings = DEFAULT_SETTINGS) => {
   Object.assign(GLOBAL_SETTINGS, DEFAULT_SETTINGS, settings);
 
   /**
@@ -252,14 +252,16 @@ export default (settings = DEFAULT_SETTINGS) => {
       // },
       post(state) {
         // console.log(this.cache);
+
         const stream = fs.createWriteStream(
-          `${PACKAGE_NAME}/${PACKAGE_NAME}.css`,
+          path.join(__dirname, `${PACKAGE_NAME}.css`),
           {
             encoding: 'utf8',
           }
         );
         const data = globalCssAst.toString();
         stream.write(data);
+        stream.end();
       },
       visitor: {
         /** @see https://github.com/babel/babel/blob/main/packages/babel-parser/ast/spec.md */
